@@ -4,11 +4,15 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-const authRoutes = require('./routes/auth');
+const authRoutes = require("./routes/auth");
+const categoryRoutes = require("./routes/category");
+const newsRoutes = require("./routes/news");
 
 app.use(bodyParser.json());
 
 app.use(authRoutes);
+app.use(categoryRoutes);
+app.use(newsRoutes);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -20,7 +24,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
@@ -31,7 +34,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://issaHalabi:4772425224@cluster0.ftog9.mongodb.net/users?retryWrites=true&w=majority",
+    "mongodb+srv://issaHalabi:4772425224@cluster0.ftog9.mongodb.net/newsDB?retryWrites=true&w=majority",
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then((result) => {

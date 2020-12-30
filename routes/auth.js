@@ -20,7 +20,7 @@ router.put(
         });
       })
       .normalizeEmail(),
-    body("password").trim().isLength({ min: 5 }),
+    body("password").trim().not().isEmpty().withMessage("Please don't send a empty data."),
   ],
   authController.signup
 );
@@ -59,8 +59,8 @@ router.post(
   "/new-password",
   [
     body("password").trim().isLength({ min: 5 }),
-    body("userId").isEmpty(),
-    body("passwordToken").isEmpty(),
+    body("userId").isEmpty().not().isEmpty().withMessage("Please don't send a empty data."),
+    body("passwordToken").isEmpty().not().isEmpty().withMessage("Please don't send a empty data."),
   ],
   authController.postNewpassword
 );

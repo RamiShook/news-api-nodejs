@@ -90,7 +90,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.postReset = async (req, res, next) => {
+exports.postReset = (req, res, next) => {
   const errors = validationResult(req);
   try {
     if (!errors.isEmpty()) {
@@ -99,7 +99,7 @@ exports.postReset = async (req, res, next) => {
       error.data = errors.array();
       throw error;
     }
-    crypto.randomBytes(32, (err, buffer) => {
+    crypto.randomBytes(32, async (err, buffer) => {
       if (err) {
         const error = new Error(err.message);
         error.statusCode = 500;
