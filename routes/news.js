@@ -46,6 +46,8 @@ router.get("/get-news-by-id/:categoryId", isAuth, newsController.getNewsByCatego
 
 router.get("/get-news/:newsId", isAuth, newsController.getNews);
 
+router.get('/goto-news', isAuth, newsController.goToNews);
+
 
 
 router.put(

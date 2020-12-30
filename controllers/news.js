@@ -55,6 +55,26 @@ exports.getNews = async (req, res, next) => {
   }
 };
 
+exports.goToNews = async (req, res, next) => {
+  const currentPage = req.query.page || 1;
+  const perPage = 10;
+  try {
+    const totalItems = await News.find().countDocuments();
+    const news = await News.find()
+      .populate("creator")
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    res.status(200).json({ message: "news fetched.", news: news });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 exports.getNewsByCategory = async (req, res, next) => {
   const categoryId = req.params.categoryId;
   const news = await News.find({ type: categoryId }).populate(
