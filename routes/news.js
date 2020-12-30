@@ -1,76 +1,71 @@
-const express = require("express");
-const { body } = require("express-validator");
+import { Router } from 'express';
+import { body } from 'express-validator';
+import category from '../models/category.js'; //eslint-disable-line
+import * as newsController from '../controllers/news.js'; //eslint-disable-line
+import isAuth from '../middleware/is-auth.js'; //eslint-disable-line
 
-const Category = require("../models/category");
-const newsController = require("../controllers/news");
-const isAuth = require("../middleware/is-auth");
-
-const router = express.Router();
+const router = Router();
 
 router.post(
-  "/add-news",
+  '/add-news',
   isAuth,
   [
-    body("categoryId")
+    body('categoryId')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data.")
-      .custom((value, { req }) => {
-        return Category.findById(value).then((userDoc) => {
-          if (!userDoc) {
-            return Promise.reject("Category does not exists!");
-          }
-        });
-      }),
-    body("title")
+      .custom((value, { req }) => category.findById(value).then((userDoc) => { //eslint-disable-line
+        if (!userDoc) {
+          return Promise.reject('Category does not exists!'); //eslint-disable-line
+        }
+      })),
+    body('title')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
-    body("desc")
+    body('desc')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
-    body("content")
+    body('content')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
   ],
-  newsController.addNews
+  newsController.addNews,
 );
 
-router.get("/get-news-by-id/:categoryId", isAuth, newsController.getNewsByCategory);
+router.get('/get-news-by-id/:categoryId', isAuth, newsController.getNewsByCategory);
 
-router.get("/get-news/:newsId", isAuth, newsController.getNews);
+router.get('/get-news/:newsId', isAuth, newsController.getNews);
 
 router.get('/goto-news', isAuth, newsController.goToNews);
 
-
-
 router.put(
-  "/update-news/:newsId",
+  '/update-news/:newsId',
   isAuth,
   [
-    body("title")
+    body('title')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
-    body("desc")
+    body('desc')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
-    body("content")
+    body('content')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
   ],
-  newsController.updateNews
+  newsController.updateNews,
 );
 
-module.exports = router;
+export default router;

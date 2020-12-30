@@ -1,46 +1,46 @@
-const crypto = require("crypto");
+import { randomBytes } from 'crypto';
 
-const { validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import { validationResult } from 'express-validator';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const nodemailer = require("nodemailer");
-const sendgridTransport = require("nodemailer-sendgrid-transport");
+import { createTransport } from 'nodemailer';
+import sendgridTransport from 'nodemailer-sendgrid-transport';
 
-const User = require("../models/user");
+import User from '../models/user.js'; //eslint-disable-line
 
-const transporter = nodemailer.createTransport(
+const transporter = createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        "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",
+        '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',
     },
-  })
+  }),
 );
 
-exports.signup = async (req, res, next) => {
+export async function signup(req, res, next) {
   const errors = validationResult(req);
   try {
     if (!errors.isEmpty()) {
-      const error = new Error("Validation failed.");
+      const error = new Error('Validation failed.');
       error.statusCode = 422;
       error.data = errors.array();
       throw error;
     }
-    const email = req.body.email;
-    const password = req.body.password;
-    let hashedPw = await bcrypt.hash(password, 12);
+    const { email } = req.body;
+    const { password } = req.body;
+    const hashedPw = await bcrypt.hash(password, 12);
     const user = new User({
-      email: email,
+      email,
       password: hashedPw,
     });
-    let result = await user.save();
-    res.status(201).json({ message: "User created!", userId: result._id });
+    const result = await user.save();
+    res.status(201).json({ message: 'User created!', userId: result._id }); //eslint-disable-line
     transporter.sendMail({
       to: email,
-      from: "issa.halabi.99@gmail.com",
-      subject: "Signup succeeded!",
-      html: "<h1>You successfully signed up!</h1>",
+      from: 'issa.halabi.99@gmail.com',
+      subject: 'Signup succeeded!',
+      html: '<h1>You successfully signed up!</h1>',
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -48,73 +48,73 @@ exports.signup = async (req, res, next) => {
     }
     next(err);
   }
-};
+}
 
-exports.login = async (req, res, next) => {
+export async function login(req, res, next) {
   const errors = validationResult(req);
   try {
     if (!errors.isEmpty()) {
-      const error = new Error("Validation failed.");
+      const error = new Error('Validation failed.');
       error.statusCode = 422;
       error.data = errors.array();
       throw error;
     }
-    const email = req.body.email;
-    const password = req.body.password;
-    let user = await User.findOne({ email: email });
+    const { email } = req.body;
+    const { password } = req.body;
+    const user = await User.findOne({ email });
     if (!user) {
-      const error = new Error("A user with this email could not be found.");
+      const error = new Error('A user with this email could not be found.');
       error.statusCode = 401;
       throw error;
     }
-    let isEqual = bcrypt.compare(password, user.password);
+    const isEqual = bcrypt.compare(password, user.password);
     if (!isEqual) {
-      const error = new Error("Wrong password!");
+      const error = new Error('Wrong password!');
       error.statusCode = 401;
       throw error;
     }
     const token = jwt.sign(
       {
         email: user.email,
-        userId: user._id.toString(),
+        userId: user._id.toString(), //eslint-disable-line
       },
-      "somesupersecretsecret",
-      { expiresIn: "1h" }
+      'somesupersecretsecret',
+      { expiresIn: '1h' },
     );
-    res.status(200).json({ token: token, userId: user._id.toString() });
+    res.status(200).json({ token, userId: user._id.toString() }); //eslint-disable-line
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
   }
-};
+}
 
-exports.postReset = (req, res, next) => {
+export function postReset(req, res, next) {
   const errors = validationResult(req);
   try {
     if (!errors.isEmpty()) {
-      const error = new Error("Validation failed.");
+      const error = new Error('Validation failed.');
       error.statusCode = 422;
       error.data = errors.array();
       throw error;
     }
-    crypto.randomBytes(32, async (err, buffer) => {
+    randomBytes(32, async (err, buffer) => {
       if (err) {
         const error = new Error(err.message);
         error.statusCode = 500;
         throw error;
       }
-      const token = buffer.toString("hex");
-      let user = await User.findOne({ email: req.body.email });
+      const token = buffer.toString('hex');
+      const user = await User.findOne({ email: req.body.email });
       user.resetToken = token;
       user.resetTokenExpiration = Date.now() + 3600000;
-      let result = await user.save();
-      res.status(201).json({ message: "User Exist!", userId: result._id });
+      const result = await user.save();
+      res.status(201).json({ message: 'User Exist!', userId: result._id }); //eslint-disable-line
       transporter.sendMail({
         to: req.body.email,
-        from: "issa.halabi.99@gmail.com",
-        subject: "Password reset",
+        from: 'issa.halabi.99@gmail.com',
+        subject: 'Password reset',
         html: `
           <p> You requested a password reset </p>
           <p> Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password. </p>
@@ -127,28 +127,33 @@ exports.postReset = (req, res, next) => {
     }
     next(err);
   }
-};
+}
 
-exports.postNewpassword = async (req, res, next) => {
+export async function postNewpassword(req, res, next) {
   const newPassword = req.body.password;
-  const userId = req.body.userId;
-  const passwordToken = req.body.passwordToken;
+  const { userId } = req.body;
+  const { passwordToken } = req.body;
   try {
-    let user = await User.findOne({
+    const user = await User.findOne({
       resetToken: passwordToken,
       resetTokenExpiration: { $gt: Date.now() },
       _id: userId,
-    })
-    let hashedPassword = await bcrypt.hash(newPassword, 12);
+    });
+    if (!user) {
+      const error = new Error('2 Errors passible user not compatible with token or token expire');
+      error.statusCode = 401;
+      throw error;
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
     user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
-    let result = await user.save();
-    res.status(201).json({ message: "Password updated!", userId: result._id });
+    const result = await user.save();
+    res.status(201).json({ message: 'Password updated!', userId: result._id }); //eslint-disable-line
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
   }
-};
+}

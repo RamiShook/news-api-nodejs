@@ -1,35 +1,33 @@
-const express = require("express");
-const { body } = require("express-validator");
+import { Router } from 'express';
+import { body } from 'express-validator';
+import * as categoryController from '../controllers/category.js'; //eslint-disable-line
+import isAuth from '../middleware/is-auth.js'; //eslint-disable-line
 
-const Category = require("../models/category");
-const categoryController = require("../controllers/category");
-const isAuth = require('../middleware/is-auth');
-
-const router = express.Router();
+const router = Router();
 
 router.post(
-  "/add-category",
+  '/add-category',
   isAuth,
   [
-    body("type")
+    body('type')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
   ],
-  categoryController.addCategory
+  categoryController.addCategory,
 );
 router.put(
-  "/update-category/:categoryId",
+  '/update-category/:categoryId',
   isAuth,
   [
-    body("type")
+    body('type')
       .trim()
       .not()
       .isEmpty()
       .withMessage("Please don't send a empty data."),
   ],
-  categoryController.updateCategory
+  categoryController.updateCategory,
 );
 
-module.exports = router;
+export default router;
