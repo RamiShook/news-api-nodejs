@@ -5,9 +5,9 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "nodemon app.js",
-    "lint": "eslint ./controllers/news.js --fix"
+    "lint": "eslint ./controllers/auth.js --fix"
   },
   "repository": {
     "type": "git",
@@ -20,10 +20,14 @@
   },
   "homepage": "https://github.com/issaHalabi99/rest-api-auth-node#readme",
   "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "chai": "^4.2.0",
     "eslint": "^7.16.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
-    "nodemon": "^2.0.6"
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
+    "sinon": "^9.2.2"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

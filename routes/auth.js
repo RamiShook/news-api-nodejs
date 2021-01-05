@@ -26,7 +26,10 @@ router.put(
 router.post(
   '/login',
   [
-    body('password').trim().isLength({ min: 5 }),
+    body('password')
+      .trim()
+      .isLength({ min: 5 })
+      .withMessage('Please enter a valid password.'),
     body('email')
       .isEmail()
       .withMessage('Please enter a valid email.')
@@ -54,7 +57,10 @@ router.post(
 router.post(
   '/new-password',
   [
-    body('password').trim().isLength({ min: 5 }),
+    body('password')
+      .trim()
+      .isLength({ min: 5 })
+      .withMessage('Please enter a valid password.'),
     body('userId').not().isEmpty()
       .withMessage("Please don't send a empty data."),
     body('passwordToken').not().isEmpty()

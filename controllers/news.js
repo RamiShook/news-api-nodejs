@@ -36,11 +36,11 @@ export async function addNews(req, res, next) {
 }
 
 export async function getNews(req, res, next) {
-  const { newsId } = req.params;
-  const news = await News.findById(newsId)
-    .populate('creator', '-password')
-    .populate('type', '-creator -createdAt -updatedAt');
   try {
+    const { newsId } = req.params;
+    const news = await News.findById(newsId)
+      .populate('creator', '-password')
+      .populate('type', '-creator -createdAt -updatedAt');
     if (!news) {
       const error = new Error('Could not find news.');
       error.statusCode = 404;
@@ -57,7 +57,7 @@ export async function getNews(req, res, next) {
 
 export async function goToNews(req, res, next) {
   const currentPage = req.query.page || 1;
-  const perPage = 10;
+  const perPage = 2;
   try {
     const news = await News.find()
       .populate('creator')

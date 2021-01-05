@@ -8,12 +8,6 @@ import newsRoutes from './routes/news.js'; //eslint-disable-line
 
 const app = express();
 
-app.use(json());
-
-app.use(authRoutes);
-app.use(categoryRoutes);
-app.use(newsRoutes);
-
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -23,6 +17,12 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+app.use(json());
+
+app.use(authRoutes);
+app.use(categoryRoutes);
+app.use(newsRoutes);
 
 app.use((error, req, res, next) => { //eslint-disable-line
   const status = error.statusCode || 500;

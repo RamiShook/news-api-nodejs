@@ -67,7 +67,7 @@ export async function login(req, res, next) {
       error.statusCode = 401;
       throw error;
     }
-    const isEqual = bcrypt.compare(password, user.password);
+    const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
       const error = new Error('Wrong password!');
       error.statusCode = 401;
@@ -82,11 +82,13 @@ export async function login(req, res, next) {
       { expiresIn: '1h' },
     );
     res.status(200).json({ token, userId: user._id.toString() }); //eslint-disable-line
+    return;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
+    return err; //eslint-disable-line
   }
 }
 
