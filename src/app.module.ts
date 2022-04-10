@@ -10,9 +10,9 @@ import entities from './news/entities';
       type: 'mysql',
       host: 'localhost',
       port: 3306,
-      username: 'nestdev',
-      password: 'nestDevLocal@2020',
-      database: 'nest_issa_news_api_one',
+      username: '',
+      password: '',
+      database: '',
       entities: entities,
       synchronize: true, //@todo change this to false in production
     }),
